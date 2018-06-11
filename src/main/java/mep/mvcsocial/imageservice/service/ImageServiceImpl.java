@@ -7,6 +7,8 @@ import mep.mvcsocial.imageservice.domain.Image;
 import mep.mvcsocial.imageservice.domain.ImageRepo;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -65,8 +68,9 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Resource getRawImage(String filename) {
-        Path pathToFile = root.resolve(filename);
+    public Resource getRawImage(String fileId) {
+        Image image = imageRepo.findById(fileId).orElseThrow( () -> new ImageNotFoundException("Cannot find raw file"));
+        Path pathToFile = root.resolve(image.getFilename());
 
         // verify exists
         if(pathToFile.toFile().exists()) {
@@ -87,6 +91,12 @@ public class ImageServiceImpl implements ImageService {
                     else
                         log.error("Failed to delete image " + imageId + " from database. Not found.");
                 });
+    }
+
+    @Override
+    public List<Image> getImageByUserId(String userId) {
+        Sort sortByDate = Sort.Order.asc("dateCreated").withProperties();
+        return imageRepo.findAllByUserId(userId, PageRequest.of(0, 20, sortByDate)).getContent();
     }
 
     @PostConstruct
