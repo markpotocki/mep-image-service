@@ -26,16 +26,12 @@ public class ImageServiceImpl implements ImageService {
     public Image createImage(Image newImage, MultipartFile rawFile) {
         Image databaseImage = imageRepo.save(newImage);
 
-        // verify size of domain
-        if(imageProperties.getMaxSize() < rawFile.getSize())
-            throw new FileTooLargeException("File is too large");
-
-        // TODO saveImage to server
+        // saveImage to server
         File file = new File(root.resolve(databaseImage.getFilename()).toUri());
         try {
             rawFile.transferTo(file);
         } catch(IOException e) {
-            e.printStackTrace();
+            throw new StorageException("Failed to save file.");
         }
         // return created domain
         return databaseImage;
