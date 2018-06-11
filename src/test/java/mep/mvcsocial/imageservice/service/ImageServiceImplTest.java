@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -53,27 +54,29 @@ public class ImageServiceImplTest {
 
     @Test
     public void validFile_LoadCorrectly() throws IOException {
-        String filename = UUID.randomUUID().toString();
+        String fileId = UUID.randomUUID().toString();
 
         // setup mocks
         ImageRepo mockImageRepo = mock(ImageRepo.class);
         ImageProperties imageProperties = new ImageProperties();
+
+        when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
         imageService.init();
 
         // save test file
-        Path p = Paths.get(imageProperties.getDirectory(), filename);
+        Path p = Paths.get(imageProperties.getDirectory(), "test");
         p.toFile().createNewFile();
 
         // load raw file
-        Resource imageRes = imageService.getRawImage(filename);
+        Resource imageRes = imageService.getRawImageByFileId(fileId);
 
         // verify loaded correctly
         assertTrue(imageRes.exists());
         assertTrue(imageRes.isReadable());
         assertTrue(imageRes.isFile());
-        assertEquals(filename, imageRes.getFilename());
+        assertEquals("test", imageRes.getFilename());
 
         // cleanup
         fileCleanup(p);

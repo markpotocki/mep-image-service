@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ImageService {
 
-    Resource getRawImage(String fileId);
+    Resource getRawImageByFileId(String fileId);
     Image getImage(String imageId);
     void deleteImage(String imageId);
     Image editImage(String imageId, Image newImage);
