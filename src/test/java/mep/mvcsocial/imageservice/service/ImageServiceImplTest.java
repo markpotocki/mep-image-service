@@ -5,6 +5,7 @@ import mep.mvcsocial.imageservice.domain.Image;
 import mep.mvcsocial.imageservice.domain.ImageRepo;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
@@ -13,7 +14,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ImageServiceImplTest {
@@ -23,7 +25,7 @@ public class ImageServiceImplTest {
         String filename = UUID.randomUUID().toString();
 
         // setup mocks
-        MockMultipartFile mockFile = new MockMultipartFile(filename, "test".getBytes());
+        MockMultipartFile mockFile = new MockMultipartFile(filename, "blah", MediaType.IMAGE_JPEG_VALUE, "test".getBytes());
         ImageRepo mockImageRepo = mock(ImageRepo.class);
         ImageProperties imageProperties = new ImageProperties();
         // create test service
@@ -35,7 +37,7 @@ public class ImageServiceImplTest {
         when(mockImageRepo.save(any(Image.class))).thenReturn(testImage);
 
         // test
-        imageService.createImage(testImage, mockFile);
+        imageService.createImage("mark", mockFile);
 
         // verify file exists
         Path pathToDirectory = Paths.get(imageProperties.getDirectory(), filename);

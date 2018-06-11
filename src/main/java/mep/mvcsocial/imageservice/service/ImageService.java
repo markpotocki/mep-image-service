@@ -11,6 +11,6 @@ public interface ImageService {
     Image getImage(String imageId);
     void deleteImage(String imageId);
     Image editImage(String imageId, Image newImage);
-    Image createImage(Image newImage, MultipartFile rawFile);
+    Image createImage(String userId, MultipartFile rawFile);
 
 }
