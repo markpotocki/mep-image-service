@@ -18,7 +18,7 @@ public class Image {
     @NonNull private String userId; // userid of picture owner
     @NonNull private String filename;
 
-    // managment stuff
+    // management stuff
     private Long dateCreated = Instant.now().toEpochMilli();
     @JsonIgnore private Integer flagCount = 0;
 
