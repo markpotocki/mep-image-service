@@ -82,6 +82,38 @@ public class ImageServiceImplTest {
         fileCleanup(p);
     }
 
+    @Test(expected = ImageNotFoundException.class)
+    public void missingDbFile_ThrowFileNotFoundException() {
+        String fileId = UUID.randomUUID().toString();
+
+        // setup mocks
+        ImageRepo mockImageRepo = mock(ImageRepo.class);
+        ImageProperties imageProperties = new ImageProperties();
+
+        when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
+        // create test service
+        ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
+        imageService.init();
+
+        imageService.getRawImageByFileId("missing");
+    }
+
+    @Test(expected = ImageNotFoundException.class)
+    public void missingRawFile_ThrowFileNotFoundException() {
+        String fileId = UUID.randomUUID().toString();
+
+        // setup mocks
+        ImageRepo mockImageRepo = mock(ImageRepo.class);
+        ImageProperties imageProperties = new ImageProperties();
+
+        when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.empty());
+        // create test service
+        ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
+        imageService.init();
+
+        imageService.getRawImageByFileId("none");
+    }
+
     private boolean fileCleanup(Path pathToDirectory) throws IOException {
         return Files.deleteIfExists(pathToDirectory);
     }

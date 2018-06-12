@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -71,11 +70,13 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Resource getRawImageByFileId(String fileId) {
         Image image = imageRepo.findById(fileId).orElseThrow( () -> new ImageNotFoundException("Cannot find raw file"));
-        Optional<Path> pathToFile = Optional.of(root.resolve(image.getFilename()));
+        Path pathToFile = root.resolve(image.getFilename());
 
         // verify exists
-        return new PathResource(pathToFile
-                .orElseThrow( () -> new ImageNotFoundException("Could not find raw file.")));
+        if(pathToFile.toFile().exists())
+            return new PathResource(pathToFile);
+        else
+            throw new ImageNotFoundException("Failed to find raw file of image.");
     }
 
     @Override
