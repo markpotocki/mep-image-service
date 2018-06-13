@@ -10,10 +10,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,6 +25,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepo imageRepo;
@@ -63,11 +66,6 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image editImage(String imageId, Image newImage) {
-        return null;
-    }
-
-    @Override
     public Resource getRawImageByFileId(String fileId) {
         Image image = imageRepo.findById(fileId).orElseThrow( () -> new ImageNotFoundException("Cannot find raw file"));
         Path pathToFile = root.resolve(image.getFilename());
@@ -87,8 +85,10 @@ public class ImageServiceImpl implements ImageService {
                     boolean isDeleted = root.resolve(image.getFilename()).toFile().delete();
                     if(isDeleted)
                         imageRepo.delete(image);
-                    else
-                        log.error("Failed to delete image " + imageId + " from database. Not found.");
+                    else {
+                        log.error("Failed to delete image " + imageId + " from database. Not found on file system.");
+                        throw new StorageException("Could not delete file because it is not on the file system.");
+                    }
                 });
     }
 
@@ -104,5 +104,14 @@ public class ImageServiceImpl implements ImageService {
         root = Paths.get(directory);
         if(!root.toFile().exists())
             root.toFile().mkdir();
+        try {
+            String testname = UUID.randomUUID().toString();
+            root.resolve(testname).toFile().createNewFile();
+            root.resolve(testname).toFile().delete();
+        } catch (IOException e) {
+            log.error("Failed to start image service. Could not write to chosen directory file directory.");
+            log.warn("Ensure write privileges for path " + root.toUri().toString());
+            throw new IOError(e);
+        }
     }
 }

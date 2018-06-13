@@ -15,8 +15,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ImageServiceImplTest {
@@ -113,6 +112,59 @@ public class ImageServiceImplTest {
 
         imageService.getRawImageByFileId("none");
     }
+
+    // delete image test
+    @Test
+    public void deleteFileId_Void() throws Exception {
+        String fileId = UUID.randomUUID().toString();
+
+        // setup mocks
+        ImageRepo mockImageRepo = mock(ImageRepo.class);
+        ImageProperties imageProperties = new ImageProperties();
+
+        when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
+        // create test service
+        ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
+        imageService.init();
+
+        // save test file
+        Path p = Paths.get(imageProperties.getDirectory(), "test");
+        p.toFile().createNewFile();
+
+        // test
+        imageService.deleteImage(fileId);
+
+        assertFalse(p.toFile().exists());
+
+    }
+
+    @Test(expected = StorageException.class)
+    public void deleteFileNotFound_StorageException() throws Exception {
+        String fileId = UUID.randomUUID().toString();
+
+        // setup mocks
+        ImageRepo mockImageRepo = mock(ImageRepo.class);
+        ImageProperties imageProperties = new ImageProperties();
+
+        when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
+        // create test service
+        ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
+        imageService.init();
+
+        // test
+        imageService.deleteImage(fileId);
+    }
+
+    @Test
+    public void initCompleteSuccessfully() {
+        // setup mocks
+        ImageRepo mockImageRepo = mock(ImageRepo.class);
+        ImageProperties imageProperties = new ImageProperties();
+
+        ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
+        imageService.init();
+    }
+
 
     private boolean fileCleanup(Path pathToDirectory) throws IOException {
         return Files.deleteIfExists(pathToDirectory);
