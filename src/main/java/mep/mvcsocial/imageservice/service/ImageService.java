@@ -12,7 +12,6 @@ public interface ImageService {
     Resource getRawImageByFileId(String fileId);
     Image getImage(String imageId);
     void deleteImage(String imageId);
-    Image editImage(String imageId, Image newImage);
     Image createImage(String userId, MultipartFile rawFile);
     List<Image> getImageByUserId(String userId);
 
