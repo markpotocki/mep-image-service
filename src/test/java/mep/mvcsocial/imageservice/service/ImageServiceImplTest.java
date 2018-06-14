@@ -30,7 +30,6 @@ public class ImageServiceImplTest {
         ImageProperties imageProperties = new ImageProperties();
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         Image testImage = new Image("mark", filename);
         // when mockRepo called return saved image
@@ -62,7 +61,6 @@ public class ImageServiceImplTest {
         when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         // save test file
         Path p = Paths.get(imageProperties.getDirectory(), "test");
@@ -92,7 +90,6 @@ public class ImageServiceImplTest {
         when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         imageService.getRawImageByFileId("missing");
     }
@@ -108,7 +105,6 @@ public class ImageServiceImplTest {
         when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.empty());
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         imageService.getRawImageByFileId("none");
     }
@@ -125,7 +121,6 @@ public class ImageServiceImplTest {
         when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         // save test file
         Path p = Paths.get(imageProperties.getDirectory(), "test");
@@ -149,7 +144,6 @@ public class ImageServiceImplTest {
         when(mockImageRepo.findById(any(String.class))).thenReturn(Optional.of(new Image(fileId, "foo", "test", 1L, 0)));
         // create test service
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
 
         // test
         imageService.deleteImage(fileId);
@@ -162,7 +156,6 @@ public class ImageServiceImplTest {
         ImageProperties imageProperties = new ImageProperties();
 
         ImageServiceImpl imageService = new ImageServiceImpl(mockImageRepo, imageProperties);
-        imageService.init();
     }
 
 

@@ -1,6 +1,5 @@
 package mep.mvcsocial.imageservice.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mep.mvcsocial.imageservice.ImageProperties;
 import mep.mvcsocial.imageservice.domain.Image;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
@@ -23,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@RequiredArgsConstructor
 @Slf4j
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -31,6 +28,12 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepo imageRepo;
     private final ImageProperties imageProperties;
     private Path root;
+
+    public ImageServiceImpl(ImageRepo imageRepo, ImageProperties imageProperties) {
+        this.imageRepo = imageRepo;
+        this.imageProperties = imageProperties;
+        this.init();
+    }
 
     @Override
     public Image createImage(String userId, MultipartFile rawFile) {
@@ -98,8 +101,7 @@ public class ImageServiceImpl implements ImageService {
         return imageRepo.findAllByUserId(userId, PageRequest.of(0, 20, sortByDate)).getContent();
     }
 
-    @PostConstruct
-    void init() {
+    private void init() {
         String directory = imageProperties.getDirectory();
         root = Paths.get(directory);
         if(!root.toFile().exists())
