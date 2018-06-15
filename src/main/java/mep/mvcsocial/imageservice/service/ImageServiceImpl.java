@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<Image> getImageByUserId(String userId) {
-        Sort sortByDate = Sort.Order.asc("dateCreated").withProperties();
+        Sort sortByDate = new Sort(Sort.Direction.ASC, "dateCreated");
         return imageRepo.findAllByUserId(userId, PageRequest.of(0, 20, sortByDate)).getContent();
     }
 
