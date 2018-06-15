@@ -1,0 +1,23 @@
+
+spring:
+  application:
+    name: IMAGE-SERVICE
+
+server:
+  port: 8090
+
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+      token-info-uri: http://localhost:8080/oauth/check_token
+      jwt:
+        key-value: -----BEGIN PUBLIC KEY-----
+                   MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmVL1ZL+6zl+P33kjrQE3
+                   k6OfaZVdxPmNNNAB4UnBPItpb+Pk/mE7r//pU03o/JNZIxYx7yP9doUFl9hnZlqe
+                   7NzDfDBqOolYHS0VcWN8IUWi217TibTNTccorsXPmKb7z09MbQWZtZVOzUTvkX5j
+                   o91I3/9Xu/5CVDbecqTGfAq0AKysTc29TtP6nR4ITFOQbYphSiG8rdkFMgfnd+FG
+                   yUsKE3EZeTOJb3RZJQdXPjxQ70cE+5Asjgs0TAhQifLgDYG6PFvOtHqvyhDbyTAq
+                   VGaaSSTlW+irCPwc9mAS+GdjmHBPk0+wOibdo2kJUI1B84+Q8p62bdccKkRJlqqw
+                   2wIDAQAB
+                   -----END PUBLIC KEY-----
